@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Volume Prediction</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>✨ Prediction Result</h1>
+    </header>
+
+    <div class="container">
+        <div class="result">
+            <p>
+                <strong style="color: #333;">⏰ Time:</strong> 
+                <span style="font-size: 1.2em; color: #667eea; font-weight: 600;">{{ hour }}:00</span>
+            </p>
+            <p>
+                <strong style="color: #333;">📅 Day:</strong> 
+                <span style="font-size: 1.2em; color: #667eea; font-weight: 600;">{{ day_name }}</span>
+            </p>
+            <p>
+                <strong style="color: #333;">🎉 Holiday:</strong> 
+                <span style="font-size: 1.2em; color: #667eea; font-weight: 600;">{{ is_holiday }}</span>
+            </p>
+            
+            <div style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                border-radius: 15px;
+                margin-top: 25px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                animation: scaleIn 0.6s ease;
+            ">
+                <div style="font-size: 0.95em; opacity: 1; margin-bottom: 10px; color: #ffffff; font-weight: 500;">Predicted Traffic Volume</div>
+                <div style="font-size: 3.5em; font-weight: bold; animation: countUp 1.5s ease; color: #ffffff;">
+                    {{ prediction }}
+                </div>
+                <div style="font-size: 1.2em; margin-top: 10px; color: #ffffff; font-weight: 500;">🚗 cars</div>
+            </div>
+
+            <a href="{% url 'predictor:index' %}" class="btn" style="margin-top: 40px;">
+                🔄 Make Another Prediction
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Animate the prediction number
+        function animateNumber(element, finalValue) {
+            let currentValue = 0;
+            const increment = Math.ceil(finalValue / 50);
+            const interval = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= finalValue) {
+                    currentValue = finalValue;
+                    clearInterval(interval);
+                }
+                element.textContent = currentValue.toLocaleString();
+            }, 20);
+        }
+
+        const predictionElement = document.querySelector('[style*="countUp"]');
+        if (predictionElement) {
+            const finalValue = {{ prediction }};
+            animateNumber(predictionElement, finalValue);
+        }
+    </script>
+
+    <style>
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotateY(10deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</body>
+</html>
