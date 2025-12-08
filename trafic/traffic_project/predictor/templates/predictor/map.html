@@ -1,0 +1,1131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kigali Traffic Map - Traffic Volume Predictor</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 500px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .left-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .left-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .left-panel::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 10px;
+        }
+
+        .left-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.7);
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .route-controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            animation: slideDown 0.6s ease;
+        }
+
+        .route-section {
+            margin: 0;
+        }
+
+        .route-section h3 {
+            color: #667eea;
+            margin: 0 0 15px 0;
+            font-size: 1em;
+        }
+
+        .route-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .route-input-group input,
+        .route-input-group select {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .route-input-group input::placeholder {
+            color: #999;
+        }
+
+        .route-input-group input:focus,
+        .route-input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .route-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .route-buttons button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
+            font-size: 0.9em;
+        }
+
+        .route-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .route-buttons button:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #f06595 100%) !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
+        }
+
+        .clear-btn:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
+        
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .location-item {
+            padding: 10px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s ease;
+        }
+
+        .location-item:hover {
+            background: #f0f4ff;
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .location-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            animation: slideDown 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .controls label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+        }
+
+        .controls input,
+        .controls select {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            width: 100%;
+        }
+
+        .controls input:focus,
+        .controls select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .controls button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
+            font-size: 0.95em;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            animation: slideUp 0.6s ease;
+        }
+
+        .info-panel h3 {
+            color: #667eea;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .route-info {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .route-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.05em;
+        }
+
+        .route-info-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .route-info-value {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .traffic-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid;
+            animation: fadeIn 0.5s ease;
+            transition: all 0.3s ease;
+        }
+
+        .traffic-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .traffic-item.heavy {
+            border-left-color: #ff6b6b;
+            background: #ffe0e0;
+        }
+
+        .traffic-item.moderate {
+            border-left-color: #ffd43b;
+            background: #fffacd;
+        }
+
+        .traffic-item.light {
+            border-left-color: #51cf66;
+            background: #e6ffed;
+        }
+
+        .traffic-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+        }
+
+        .traffic-details {
+            font-size: 0.95em;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .traffic-volume {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .traffic-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .status-heavy {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .status-moderate {
+            background: #ffd43b;
+            color: #333;
+        }
+
+        .status-light {
+            background: #51cf66;
+            color: white;
+        }
+
+        .legend {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+        }
+
+        .legend h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            font-size: 0.95em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .legend-item span {
+            font-size: 0.85em;
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            animation: slideUp 0.6s ease;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .info-panel h3 {
+            color: #667eea;
+            margin: 0 0 15px 0;
+            font-size: 1em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: 600;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tablet and small laptops */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 320px 1fr;
+                gap: 15px;
+                padding: 15px;
+                min-height: auto;
+            }
+
+            .left-panel {
+                gap: 12px;
+            }
+        }
+
+        /* Tablets */
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 15px;
+                min-height: auto;
+            }
+
+            .left-panel {
+                max-height: none;
+                overflow-y: visible;
+            }
+
+            .right-panel {
+                gap: 15px;
+            }
+
+            #map {
+                height: 450px;
+            }
+
+            .route-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .route-input-group {
+                flex-direction: column;
+            }
+
+            .controls {
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .controls label {
+                font-size: 0.9em;
+                margin-bottom: 3px;
+            }
+
+            .controls input,
+            .controls select,
+            .controls button,
+            .route-buttons button {
+                font-size: 0.9em;
+                padding: 9px 10px;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+
+            .main-container {
+                padding: 10px;
+                gap: 10px;
+                min-height: auto;
+            }
+
+            .left-panel {
+                gap: 10px;
+                max-height: none;
+                overflow-y: visible;
+            }
+
+            .right-panel {
+                gap: 10px;
+            }
+
+            #map {
+                height: 350px;
+            }
+
+            .route-controls,
+            .controls,
+            .legend,
+            .info-panel {
+                padding: 10px;
+                border-radius: 10px;
+                max-height: none;
+            }
+
+            .route-section h3,
+            .info-panel h3,
+            .legend h4 {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+
+            .controls label {
+                font-size: 0.85em;
+            }
+
+            .controls input,
+            .controls select,
+            .controls button,
+            .route-buttons button {
+                font-size: 0.85em;
+                padding: 8px 8px;
+            }
+
+            .nav-links a {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+
+            .legend-item span {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🗺️ Kigali Traffic Map & Route Finder</h1>
+    </header>
+
+    <div class="main-container">
+        <!-- LEFT PANEL: CONTROLS AND NAVIGATION -->
+        <div class="left-panel">
+            <div class="route-controls">
+                <div class="route-section">
+                    <h3>🛣️ Find Route</h3>
+                    <div class="route-input-group">
+                        <input type="text" id="from-location" placeholder="From (e.g., Kabuga)" list="locations-list">
+                        <input type="text" id="to-location" placeholder="To (e.g., Nyabugogo)" list="locations-list">
+                    </div>
+                    <datalist id="locations-list">
+                        <option value="Kabuga">
+                        <option value="Nyabugogo">
+                        <option value="Kigali City Center">
+                        <option value="Kacyiru">
+                        <option value="Gisozi">
+                        <option value="Nyamirambo">
+                        <option value="Kimihurura">
+                    </datalist>
+                    <div class="route-buttons">
+                        <button onclick="findRoute()">🔍 Route</button>
+                        <button onclick="clearRoute()" class="clear-btn">🗑️ Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <label for="hour">⏰ Hour:</label>
+                <input type="number" id="hour" min="0" max="23" value="12">
+
+                <label for="day">📅 Day:</label>
+                <select id="day">
+                    <option value="0">Monday</option>
+                    <option value="1">Tuesday</option>
+                    <option value="2">Wednesday</option>
+                    <option value="3">Thursday</option>
+                    <option value="4">Friday</option>
+                    <option value="5">Saturday</option>
+                    <option value="6">Sunday</option>
+                </select>
+
+                <label for="holiday">🎉 Holiday:</label>
+                <select id="holiday">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <button onclick="updateTrafficData()">🔄 Update</button>
+            </div>
+
+            <div class="legend">
+                <h4>📊 Legend</h4>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff6b6b;"></div>
+                    <span><strong>Heavy</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffd43b;"></div>
+                    <span><strong>Moderate</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #51cf66;"></div>
+                    <span><strong>Light</strong></span>
+                </div>
+            </div>
+
+            <div class="nav-links">
+                <a href="{% url 'predictor:index' %}">🔮 Predict</a>
+                <a href="/">🏠 Home</a>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: MAP AND INFO -->
+        <div class="right-panel">
+            <div id="map"></div>
+            <div class="info-panel">
+                <h3>📊 Traffic Info</h3>
+                <div id="traffic-info" class="loading">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Kigali locations database with coordinates
+        const kigaliLocations = {
+            'Kabuga': { lat: -1.9480, lng: 30.0450, area: 'East Kigali' },
+            'Nyabugogo': { lat: -1.9650, lng: 30.0650, area: 'South Kigali' },
+            'Kigali City Center': { lat: -1.9536, lng: 30.0605, area: 'Downtown' },
+            'Kacyiru': { lat: -1.9450, lng: 30.0800, area: 'East Central' },
+            'Gisozi': { lat: -1.9400, lng: 30.0550, area: 'North Central' },
+            'Nyamirambo': { lat: -1.9600, lng: 30.0500, area: 'Southwest' },
+            'Kimihurura': { lat: -1.9350, lng: 30.0900, area: 'East' }
+        };
+
+        // Initialize map centered on Kigali
+        const map = L.map('map').setView([-1.9536, 30.0605], 13);
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Store markers and route
+        let markers = {};
+        let polylines = {};
+        let routeControl = null;
+
+        // Function to get color based on traffic density
+        function getTrafficColor(density) {
+            if (density > 75) return '#ff6b6b';
+            if (density > 50) return '#ffd43b';
+            return '#51cf66';
+        }
+
+        // Function to get status text
+        function getStatus(density) {
+            if (density > 75) return 'Heavy';
+            if (density > 50) return 'Moderate';
+            return 'Light';
+        }
+
+        // Initialize map with all locations
+        function initializeMap() {
+            Object.keys(kigaliLocations).forEach(name => {
+                const loc = kigaliLocations[name];
+                const marker = L.circleMarker([loc.lat, loc.lng], {
+                    radius: 12,
+                    fillColor: '#667eea',
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.7
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <div style="font-weight: 600; color: #333;">${name}</div>
+                    <div style="color: #666; font-size: 0.9em;">${loc.area}</div>
+                `);
+
+                markers[name] = marker;
+            });
+        }
+
+        // Find route between two locations
+        function findRoute() {
+            const fromLocation = document.getElementById('from-location').value;
+            const toLocation = document.getElementById('to-location').value;
+
+            if (!fromLocation || !toLocation) {
+                alert('Please enter both "From" and "To" locations');
+                return;
+            }
+
+            if (!kigaliLocations[fromLocation] || !kigaliLocations[toLocation]) {
+                alert('Location not found. Please select from the list.');
+                return;
+            }
+
+            // Clear existing route
+            if (routeControl) {
+                map.removeControl(routeControl);
+            }
+
+            const from = kigaliLocations[fromLocation];
+            const to = kigaliLocations[toLocation];
+
+            // Create routing control
+            routeControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(from.lat, from.lng),
+                    L.latLng(to.lat, to.lng)
+                ],
+                routeWhileDragging: false,
+                lineOptions: {
+                    styles: [
+                        { color: '#667eea', opacity: 0.7, weight: 5 }
+                    ]
+                },
+                createMarker: function(i, wp, nWps) {
+                    if (i === 0) {
+                        return L.marker(wp.latLng, {
+                            icon: L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34]
+                            })
+                        });
+                    } else if (i === nWps - 1) {
+                        return L.marker(wp.latLng, {
+                            icon: L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34]
+                            })
+                        });
+                    }
+                }
+            }).addTo(map);
+
+            // Update traffic info with route details
+            updateTrafficDataForRoute(fromLocation, toLocation);
+        }
+
+        // Clear route
+        function clearRoute() {
+            if (routeControl) {
+                map.removeControl(routeControl);
+                routeControl = null;
+            }
+            document.getElementById('from-location').value = '';
+            document.getElementById('to-location').value = '';
+            updateTrafficData();
+        }
+
+        // Update traffic data for route
+        async function updateTrafficDataForRoute(from, to) {
+            const hour = document.getElementById('hour').value;
+            const day = document.getElementById('day').value;
+            const holiday = document.getElementById('holiday').value;
+
+            const infoPanel = document.getElementById('traffic-info');
+            infoPanel.innerHTML = '<div class="loading">Loading route traffic data...</div>';
+
+            try {
+                const response = await fetch(`/get-traffic-data/?hour=${hour}&day=${day}&is_holiday=${holiday}`);
+                const result = await response.json();
+
+                let infoHTML = `
+                    <div class="route-info">
+                        <div class="route-info-item">
+                            <span class="route-info-label">📍 From:</span>
+                            <span class="route-info-value">${from}</span>
+                        </div>
+                        <div class="route-info-item">
+                            <span class="route-info-label">📍 To:</span>
+                            <span class="route-info-value">${to}</span>
+                        </div>
+                        <div class="route-info-item">
+                            <span class="route-info-label">⏰ Time:</span>
+                            <span class="route-info-value">${hour}:00</span>
+                        </div>
+                        <div class="route-info-item">
+                            <span class="route-info-label">⚠️ Avg Traffic:</span>
+                            <span class="route-info-value" id="avg-traffic">Calculating...</span>
+                        </div>
+                    </div>
+                    <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 15px;">🛣️ Traffic Along Route</h4>
+                `;
+
+                let totalDensity = 0;
+                let count = 0;
+
+                result.data.forEach(street => {
+                    const color = getTrafficColor(street.traffic_density);
+                    const statusClass = `status-${street.status.toLowerCase()}`;
+
+                    infoHTML += `
+                        <div class="traffic-item ${street.status.toLowerCase()}">
+                            <div class="traffic-name">📍 ${street.name}</div>
+                            <div class="traffic-details">
+                                <span>🚗 ${street.traffic_volume} cars</span>
+                                <span>📊 ${street.traffic_density}%</span>
+                                <span class="traffic-status ${statusClass}">${street.status}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    totalDensity += street.traffic_density;
+                    count++;
+                });
+
+                const avgTraffic = count > 0 ? Math.round(totalDensity / count) : 0;
+                infoPanel.innerHTML = infoHTML.replace('Calculating...', avgTraffic + '%');
+            } catch (error) {
+                infoPanel.innerHTML = '<div style="color: #ff6b6b; font-weight: 600;">Error loading traffic data</div>';
+                console.error('Error:', error);
+            }
+        }
+
+        // Update traffic data
+        async function updateTrafficData() {
+            const hour = document.getElementById('hour').value;
+            const day = document.getElementById('day').value;
+            const holiday = document.getElementById('holiday').value;
+
+            const infoPanel = document.getElementById('traffic-info');
+            infoPanel.innerHTML = '<div class="loading">Updating traffic data...</div>';
+
+            try {
+                const response = await fetch(`/get-traffic-data/?hour=${hour}&day=${day}&is_holiday=${holiday}`);
+                const result = await response.json();
+
+                let infoHTML = '<h4 style="color: #667eea; margin-top: 0;">📊 Current Traffic Status</h4>';
+
+                result.data.forEach(street => {
+                    const color = getTrafficColor(street.traffic_density);
+                    const statusClass = `status-${street.status.toLowerCase()}`;
+
+                    infoHTML += `
+                        <div class="traffic-item ${street.status.toLowerCase()}">
+                            <div class="traffic-name">📍 ${street.name}</div>
+                            <div class="traffic-details">
+                                <span>🚗 ${street.traffic_volume} cars</span>
+                                <span>📊 ${street.traffic_density}%</span>
+                                <span class="traffic-status ${statusClass}">${street.status}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                infoPanel.innerHTML = infoHTML;
+            } catch (error) {
+                infoPanel.innerHTML = '<div style="color: #ff6b6b; font-weight: 600;">Error loading traffic data</div>';
+                console.error('Error:', error);
+            }
+        }
+
+        // Initialize
+        initializeMap();
+        updateTrafficData();
+    </script>
+</body>
+</html>
+    <style>
+        #map {
+            height: 600px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin: 30px 0;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            animation: slideDown 0.6s ease;
+        }
+
+        .controls label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .controls input,
+        .controls select {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .controls input:focus,
+        .controls select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .controls button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            animation: slideUp 0.6s ease;
+        }
+
+        .info-panel h3 {
+            color: #667eea;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .traffic-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid;
+            animation: fadeIn 0.5s ease;
+            transition: all 0.3s ease;
+        }
+
+        .traffic-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .traffic-item.heavy {
+            border-left-color: #ff6b6b;
+            background: #ffe0e0;
+        }
+
+        .traffic-item.moderate {
+            border-left-color: #ffd43b;
+            background: #fffacd;
+        }
+
+        .traffic-item.light {
+            border-left-color: #51cf66;
+            background: #e6ffed;
+        }
+
+        .traffic-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+        }
+
+        .traffic-details {
+            font-size: 0.95em;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .traffic-volume {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .traffic-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .status-heavy {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .status-moderate {
+            background: #ffd43b;
+            color: #333;
+        }
+
+        .status-light {
+            background: #51cf66;
+            color: white;
+        }
+
+        .legend {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            #map {
+                height: 400px;
+            }
+
+            .controls {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .controls label,
+            .controls input,
+            .controls select,
+            .controls button {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: 600;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+
+</html>
