@@ -24,7 +24,7 @@
         #map {
             height: 500px;
             border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .main-container {
@@ -32,7 +32,7 @@
             grid-template-columns: 380px 1fr;
             gap: 20px;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f8f9fa;
             min-height: 100vh;
         }
 
@@ -54,12 +54,12 @@
         }
 
         .left-panel::-webkit-scrollbar-thumb {
-            background: rgba(102, 126, 234, 0.5);
+            background: rgba(74, 144, 226, 0.5);
             border-radius: 10px;
         }
 
         .left-panel::-webkit-scrollbar-thumb:hover {
-            background: rgba(102, 126, 234, 0.7);
+            background: rgba(74, 144, 226, 0.7);
         }
 
         .right-panel {
@@ -74,7 +74,7 @@
             background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             animation: slideDown 0.6s ease;
         }
 
@@ -83,7 +83,7 @@
         }
 
         .route-section h3 {
-            color: #667eea;
+            color: #4a90e2;
             margin: 0 0 15px 0;
             font-size: 1em;
         }
@@ -112,8 +112,8 @@
         .route-input-group input:focus,
         .route-input-group select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
 
         .route-buttons {
@@ -123,7 +123,7 @@
         }
 
         .route-buttons button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4a90e2 0%, #10b981 100%);
             color: white;
             border: none;
             padding: 10px 15px;
@@ -131,14 +131,14 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.25);
             white-space: nowrap;
             font-size: 0.9em;
         }
 
         .route-buttons button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.35);
         }
 
         .route-buttons button:active {
@@ -167,14 +167,14 @@
             margin: 5px 0;
             border-radius: 6px;
             cursor: pointer;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #4a90e2;
             transition: all 0.2s ease;
         }
 
         .location-item:hover {
-            background: #f0f4ff;
+            background: #f0f9ff;
             transform: translateX(5px);
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 3px 10px rgba(74, 144, 226, 0.15);
         }
 
         .location-item strong {
@@ -187,7 +187,7 @@
             background: rgba(255, 255, 255, 0.95);
             padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             animation: slideDown 0.6s ease;
             display: flex;
             flex-direction: column;
@@ -214,13 +214,13 @@
 
         .controls input:focus,
         .controls select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
             outline: none;
         }
 
         .controls button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4a90e2 0%, #10b981 100%);
             color: white;
             border: none;
             padding: 12px 15px;
@@ -228,35 +228,35 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.25);
             white-space: nowrap;
             font-size: 0.95em;
         }
 
         .controls button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.35);
         
             background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 15px;
             margin-top: 20px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             animation: slideUp 0.6s ease;
         }
 
         .info-panel h3 {
-            color: #667eea;
+            color: #4a90e2;
             margin-top: 0;
             font-size: 1.3em;
         }
 
         .route-info {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            background: #f0f9ff;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #4a90e2;
         }
 
         .route-info-item {
@@ -272,7 +272,7 @@
         }
 
         .route-info-value {
-            color: #667eea;
+            color: #4a90e2;
             font-weight: 600;
         }
 
@@ -323,7 +323,7 @@
         }
 
         .traffic-volume {
-            color: #667eea;
+            color: #4a90e2;
             font-weight: 600;
         }
 
@@ -355,12 +355,12 @@
             padding: 15px;
             border-radius: 12px;
             font-size: 0.9em;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .legend h4 {
             margin: 0 0 10px 0;
-            color: #667eea;
+            color: #4a90e2;
             font-size: 0.95em;
         }
 
@@ -392,12 +392,12 @@
         .nav-links a {
             display: block;
             padding: 10px 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4a90e2 0%, #10b981 100%);
             color: white;
             text-decoration: none;
             border-radius: 8px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.25);
             font-weight: 600;
             text-align: center;
             font-size: 0.95em;
@@ -405,21 +405,21 @@
 
         .nav-links a:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.35);
         }
 
         .info-panel {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             animation: slideUp 0.6s ease;
             overflow-y: auto;
             max-height: 400px;
         }
 
         .info-panel h3 {
-            color: #667eea;
+            color: #4a90e2;
             margin: 0 0 15px 0;
             font-size: 1em;
         }
@@ -427,7 +427,7 @@
         .loading {
             text-align: center;
             padding: 20px;
-            color: #667eea;
+            color: #4a90e2;
             font-weight: 600;
             animation: pulse 1.5s ease infinite;
         }
@@ -708,7 +708,7 @@
                 const loc = kigaliLocations[name];
                 const marker = L.circleMarker([loc.lat, loc.lng], {
                     radius: 12,
-                    fillColor: '#667eea',
+                    fillColor: '#4a90e2',
                     color: '#fff',
                     weight: 2,
                     opacity: 1,
@@ -756,7 +756,7 @@
                 routeWhileDragging: false,
                 lineOptions: {
                     styles: [
-                        { color: '#667eea', opacity: 0.7, weight: 5 }
+                        { color: '#4a90e2', opacity: 0.7, weight: 5 }
                     ]
                 },
                 createMarker: function(i, wp, nWps) {
@@ -831,7 +831,7 @@
                             <span class="route-info-value" id="avg-traffic">Calculating...</span>
                         </div>
                     </div>
-                    <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 15px;">🛣️ Traffic Along Route</h4>
+                    <h4 style="color: #4a90e2; margin-top: 20px; margin-bottom: 15px;">🛣️ Traffic Along Route</h4>
                 `;
 
                 let totalDensity = 0;
@@ -877,7 +877,7 @@
                 const response = await fetch(`/get-traffic-data/?hour=${hour}&day=${day}&is_holiday=${holiday}`);
                 const result = await response.json();
 
-                let infoHTML = '<h4 style="color: #667eea; margin-top: 0;">📊 Current Traffic Status</h4>';
+                let infoHTML = '<h4 style="color: #4a90e2; margin-top: 0;">📊 Current Traffic Status</h4>';
 
                 result.data.forEach(street => {
                     const color = getTrafficColor(street.traffic_density);
@@ -907,225 +907,4 @@
         updateTrafficData();
     </script>
 </body>
-</html>
-    <style>
-        #map {
-            height: 600px;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            margin: 30px 0;
-        }
-
-        .controls {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
-            animation: slideDown 0.6s ease;
-        }
-
-        .controls label {
-            display: inline-block;
-            margin-right: 15px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .controls input,
-        .controls select {
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            margin-right: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .controls input:focus,
-        .controls select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .controls button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .controls button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .info-panel {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
-            animation: slideUp 0.6s ease;
-        }
-
-        .info-panel h3 {
-            color: #667eea;
-            margin-top: 0;
-            font-size: 1.3em;
-        }
-
-        .traffic-item {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            border-left: 5px solid;
-            animation: fadeIn 0.5s ease;
-            transition: all 0.3s ease;
-        }
-
-        .traffic-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .traffic-item.heavy {
-            border-left-color: #ff6b6b;
-            background: #ffe0e0;
-        }
-
-        .traffic-item.moderate {
-            border-left-color: #ffd43b;
-            background: #fffacd;
-        }
-
-        .traffic-item.light {
-            border-left-color: #51cf66;
-            background: #e6ffed;
-        }
-
-        .traffic-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 1.05em;
-            margin-bottom: 8px;
-        }
-
-        .traffic-details {
-            font-size: 0.95em;
-            color: #666;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .traffic-volume {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .traffic-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        .status-heavy {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .status-moderate {
-            background: #ffd43b;
-            color: #333;
-        }
-
-        .status-light {
-            background: #51cf66;
-            color: white;
-        }
-
-        .legend {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .nav-links {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .nav-links a {
-            display: inline-block;
-            margin: 0 10px;
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .nav-links a:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            #map {
-                height: 400px;
-            }
-
-            .controls {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .controls label,
-            .controls input,
-            .controls select,
-            .controls button {
-                margin-bottom: 10px;
-                width: 100%;
-            }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-            font-weight: 600;
-            animation: pulse 1.5s ease infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-    </style>
-</head>
-
 </html>

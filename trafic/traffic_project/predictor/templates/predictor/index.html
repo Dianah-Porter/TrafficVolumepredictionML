@@ -44,16 +44,16 @@
         <div style="text-align: center; margin-top: 30px;">
             <a href="{% url 'predictor:map' %}" style="
                 display: inline-block;
-                background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                 color: white;
                 padding: 14px 32px;
                 text-decoration: none;
                 border-radius: 10px;
                 font-weight: 600;
-                box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
                 transition: all 0.3s ease;
-            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 30px rgba(81, 207, 102, 0.4)'" 
-               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(81, 207, 102, 0.3)'">
+            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.35)'" 
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.25)'">
                 🗺️ View Kigali Traffic Map
             </a>
         </div>
@@ -89,6 +89,15 @@
                 transform: scale(4);
                 opacity: 0;
             }
+        }
+        
+        /* Ensure white background */
+        body {
+            background: #ffffff !important;
+        }
+        
+        html {
+            background: #ffffff !important;
         }
     </style>
 </body>

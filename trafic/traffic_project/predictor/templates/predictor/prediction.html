@@ -16,25 +16,25 @@
         <div class="result">
             <p>
                 <strong style="color: #333;">⏰ Time:</strong> 
-                <span style="font-size: 1.2em; color: #667eea; font-weight: 600;">{{ hour }}:00</span>
+                <span style="font-size: 1.2em; color: #4a90e2; font-weight: 600;">{{ hour }}:00</span>
             </p>
             <p>
                 <strong style="color: #333;">📅 Day:</strong> 
-                <span style="font-size: 1.2em; color: #667eea; font-weight: 600;">{{ day_name }}</span>
+                <span style="font-size: 1.2em; color: #4a90e2; font-weight: 600;">{{ day_name }}</span>
             </p>
             <p>
                 <strong style="color: #333;">🎉 Holiday:</strong> 
-                <span style="font-size: 1.2em; color: #667eea; font-weight: 600;">{{ is_holiday }}</span>
+                <span style="font-size: 1.2em; color: #4a90e2; font-weight: 600;">{{ is_holiday }}</span>
             </p>
             
             <div style="
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #4a90e2 0%, #10b981 100%);
                 color: white;
                 padding: 30px;
                 border-radius: 15px;
                 margin-top: 25px;
                 text-align: center;
-                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 4px 20px rgba(74, 144, 226, 0.25);
                 animation: scaleIn 0.6s ease;
             ">
                 <div style="font-size: 0.95em; opacity: 1; margin-bottom: 10px; color: #ffffff; font-weight: 500;">Predicted Traffic Volume</div>
@@ -50,8 +50,8 @@
 
             <a href="{% url 'predictor:map' %}" class="btn" style="
                 margin-top: 15px;
-                background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-                box-shadow: 0 8px 20px rgba(81, 207, 102, 0.3);
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
             ">
                 🗺️ View Kigali Traffic Map
             </a>
@@ -101,6 +101,15 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* Ensure white background */
+        body {
+            background: #ffffff !important;
+        }
+        
+        html {
+            background: #ffffff !important;
         }
     </style>
 </body>
