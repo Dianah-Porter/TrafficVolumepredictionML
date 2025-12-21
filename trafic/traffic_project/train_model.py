@@ -1,12 +1,3 @@
-#!/usr/bin/env python
-"""
-Traffic Volume Model Training Script
-
-This script trains a machine learning model to predict traffic volume based on:
-- Hour of the day (0-23)
-- Day of the week (0-6, where 0 is Monday)
-- Is holiday (0 or 1)
-"""
 
 import os
 import numpy as np
@@ -14,11 +5,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 import joblib
 
-# Set random seed for reproducibility
+
 np.random.seed(42)
 
-# Generate synthetic training data
-# In a real scenario, this would come from actual traffic data
 print("Generating synthetic traffic data...")
 
 # Create features (hour, day_of_week, is_holiday)
@@ -34,14 +23,7 @@ for hour in range(24):
             hours.append(hour)
             days.append(day)
             holidays.append(holiday)
-            
-            # Simulate traffic volume based on patterns
-            # More traffic during rush hours (7-9, 17-19)
-            # Weekdays have more traffic than weekends
-            # Holidays have different patterns
-            
             base_volume = 1000
-            
             # Hour-based pattern (rush hours)
             if 7 <= hour < 10 or 17 <= hour < 20:
                 base_volume += 500
@@ -96,7 +78,7 @@ joblib.dump(model, model_path)
 
 print("Model training completed successfully!")
 
-# Test the model with sample predictions
+
 print("\nTesting model with sample predictions:")
 test_cases = [
     (8, 0, 0, "Monday 8:00 AM, Regular day"),

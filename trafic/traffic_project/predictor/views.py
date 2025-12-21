@@ -24,16 +24,16 @@ def index(request):
 
 def map_view(request):
     """Display traffic map for Kigali city"""
-    # Get traffic prediction data for different areas
+ 
     model = get_model()
     
-    # Kigali city center coordinates
+   
     kigali_center = {
         'lat': -1.9536,
         'lng': 30.0605
     }
     
-    # Major streets and areas in Kigali with their coordinates
+    
     streets = [
         {
             'name': 'KN 2 Road (Main Highway)',
